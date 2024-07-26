@@ -1,7 +1,7 @@
 import os
 import re
 import folder_paths
-from abc import ABC
+from abc import ABC, abstractmethod
 
 ARCHITECTS = "Architects"
 ARTISTS = "Artists"
@@ -55,10 +55,6 @@ class CSVLoader(ABC):
             """)
         return items
 
-    # @abstractmethod
-    # def INPUT_TYPES(cls):
-    #     pass
-
     RETURN_TYPES = ("STRING", "STRING")
     RETURN_NAMES = ("positive prompt", "negative prompt")
     FUNCTION = "execute"
@@ -75,21 +71,25 @@ class CSVLoader(ABC):
             },
         }
 
-    def execute(self, items):
-        return (
-            self.items_csv[items][0], self.items_csv[items][1])
+    @abstractmethod
+    def execute(self, class_name):
+        pass
 
 
 # ARCHITECTS
 class ArchitectsCSVLoader(CSVLoader):
     """
-    Loads csv file with architects.
+    Loads csv file with characters. For migration purposes from automatic11111 webui.
     """
     item_name = ARCHITECTS.lower()
 
     @classmethod
     def INPUT_TYPES(cls):
-        return super().INPUT_TYPES(cls.item_name)
+        super().INPUT_TYPES(cls.item_name)
+
+    def execute(self, architects):
+        return (
+        self.items_csv[architects][0], self.items_csv[architects][1])
 
 
 # ARTISTS
@@ -101,7 +101,10 @@ class ArtistsCSVLoader(CSVLoader):
 
     @classmethod
     def INPUT_TYPES(cls):
-        return super().INPUT_TYPES(cls.item_name)
+        super().INPUT_TYPES(cls.item_name)
+
+    def execute(self, artist):
+        return self.items_csv[artist][0], self.items_csv[artist][1]
 
 
 # COLORS
@@ -115,6 +118,9 @@ class ColorsCSVLoader(CSVLoader):
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
 
+    def execute(self, colors):
+        return self.items_csv[colors][0], self.items_csv[colors][1]
+
 
 # DESIGNERS
 class DesignersCSVLoader(CSVLoader):
@@ -126,6 +132,9 @@ class DesignersCSVLoader(CSVLoader):
     @classmethod
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
+
+    def execute(self, designers):
+        return self.items_csv[designers][0], self.items_csv[designers][1]
 
 
 # LIGHTS
@@ -139,6 +148,9 @@ class LightsCSVLoader(CSVLoader):
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
 
+    def execute(self, lights):
+        return self.items_csv[lights][0], self.items_csv[lights][1]
+
 
 # MATERIALS
 class MaterialsCSVLoader(CSVLoader):
@@ -150,6 +162,9 @@ class MaterialsCSVLoader(CSVLoader):
     @classmethod
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
+
+    def execute(self, materials):
+        return self.items_csv[materials][0], self.items_csv[materials][1]
 
 
 # ARTMOVEMENTS
@@ -163,6 +178,9 @@ class ArtmovementsCSVLoader(CSVLoader):
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
 
+    def execute(self, artmovements):
+        return self.items_csv[artmovements][0], self.items_csv[artmovements][1]
+
 
 # CHARACTERS
 class CharactersCSVLoader(CSVLoader):
@@ -174,6 +192,9 @@ class CharactersCSVLoader(CSVLoader):
     @classmethod
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
+
+    def execute(self, characters):
+        return self.items_csv[characters][0], self.items_csv[characters][1]
 
 
 # COMPOSITION
@@ -187,6 +208,9 @@ class CompositionCSVLoader(CSVLoader):
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
 
+    def execute(self, composition):
+        return self.items_csv[composition][0], self.items_csv[composition][1]
+
 
 # LIGHTING
 class LightingCSVLoader(CSVLoader):
@@ -198,6 +222,9 @@ class LightingCSVLoader(CSVLoader):
     @classmethod
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
+
+    def execute(self, lighting):
+        return self.items_csv[lighting][0], self.items_csv[lighting][1]
 
 
 # SETTING
@@ -211,6 +238,9 @@ class SettingsCSVLoader(CSVLoader):
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
 
+    def execute(self, setting):
+        return self.items_csv[setting][0], self.items_csv[setting][1]
+
 
 # STYLE
 class StylesCSVLoader(CSVLoader):
@@ -222,6 +252,9 @@ class StylesCSVLoader(CSVLoader):
     @classmethod
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
+
+    def execute(self, style):
+        return self.items_csv[style][0], self.items_csv[style][1]
 
 
 # POSITIVE
@@ -235,6 +268,9 @@ class PositiveCSVLoader(CSVLoader):
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
 
+    def execute(self, positive):
+        return self.items_csv[positive][0], self.items_csv[positive][1]
+
 
 # NEGATIVE
 class NegativeCSVLoader(CSVLoader):
@@ -247,6 +283,9 @@ class NegativeCSVLoader(CSVLoader):
     def INPUT_TYPES(cls):
         return super().INPUT_TYPES(cls.item_name)
 
+    def execute(self, negative):
+        return self.items_csv[negative][0], self.items_csv[negative][1]
+
 
 # NODE NAMING
 
@@ -256,6 +295,7 @@ NODE_CLASS_MAPPINGS = {
     f"Load {COLORS} CSV": ColorsCSVLoader,
     f"Load {DESIGNERS} CSV": DesignersCSVLoader,
     f"Load {LIGHTS} CSV": LightsCSVLoader,
+    f"Load {MATERIALS} CSV": MaterialsCSVLoader,
     f"Load {ARTMOVEMENTS} CSV": ArtmovementsCSVLoader,
     f"Load {CHARACTERS} CSV": CharactersCSVLoader,
     f"Load {COMPOSITION} CSV": CompositionCSVLoader,
@@ -272,6 +312,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     f"{COLORS}CSVLoader": f"Load {COLORS} CSV Node",
     f"{DESIGNERS}CSVLoader": f"Load {DESIGNERS} CSV Node",
     f"{LIGHTS}CSVLoader": f"Load {LIGHTS} CSV Node",
+    f"{MATERIALS}CSVLoader": f"Load {MATERIALS} CSV Node",
     f"{ARTMOVEMENTS}CSVLoader": f"Load {ARTMOVEMENTS} CSV Node",
     f"{CHARACTERS}CSVLoader": f"Load {CHARACTERS} CSV Node",
     f"{COMPOSITION}CSVLoader": f"Load {COMPOSITION} CSV Node",
