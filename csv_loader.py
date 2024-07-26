@@ -2,6 +2,7 @@ import os
 import re
 import folder_paths
 from abc import ABC, abstractmethod
+from .txt_to_csv_converter import converter
 
 ARCHITECTS = "Architects"
 ARTISTS = "Artists"
@@ -17,6 +18,8 @@ SETTINGS = "Settings"
 STYLES = "Styles"
 POSITIVE = "Positive"
 NEGATIVE = "Negative"
+
+PATH = r"D:\AI\ComfyUI_windows_portable\ComfyUI\custom_nodes\ComfyUI-CSV-Loader\CSV"
 
 
 class CSVLoader(ABC):
@@ -34,6 +37,9 @@ class CSVLoader(ABC):
         Returns:
             list: List of items. Each style is a dict with keys: style_name and value: [positive_prompt, negative_prompt]
         """
+
+        converter(PATH)
+
         items = {
             "Error loading items.csv, check the console": ["", ""]}
         if not os.path.exists(path):
@@ -85,11 +91,11 @@ class ArchitectsCSVLoader(CSVLoader):
 
     @classmethod
     def INPUT_TYPES(cls):
-        super().INPUT_TYPES(cls.item_name)
+        return super().INPUT_TYPES(cls.item_name)
 
     def execute(self, architects):
         return (
-        self.items_csv[architects][0], self.items_csv[architects][1])
+            self.items_csv[architects][0], self.items_csv[architects][1])
 
 
 # ARTISTS
@@ -101,10 +107,10 @@ class ArtistsCSVLoader(CSVLoader):
 
     @classmethod
     def INPUT_TYPES(cls):
-        super().INPUT_TYPES(cls.item_name)
+        return super().INPUT_TYPES(cls.item_name)
 
-    def execute(self, artist):
-        return self.items_csv[artist][0], self.items_csv[artist][1]
+    def execute(self, artists):
+        return self.items_csv[artists][0], self.items_csv[artists][1]
 
 
 # COLORS
