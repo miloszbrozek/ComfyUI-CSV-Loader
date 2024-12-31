@@ -2,7 +2,6 @@ import os
 import re
 import folder_paths
 from abc import ABC, abstractmethod
-from .txt_to_csv_converter import converter
 
 ARCHITECTS = "Architects"
 ARTISTS = "Artists"
@@ -18,8 +17,6 @@ SETTINGS = "Settings"
 STYLES = "Styles"
 POSITIVE = "Positive"
 NEGATIVE = "Negative"
-
-PATH = r"D:\AI\ComfyUI_windows_portable\ComfyUI\custom_nodes\ComfyUI-CSV-Loader\CSV"
 
 
 class CSVLoader(ABC):
@@ -38,12 +35,10 @@ class CSVLoader(ABC):
             list: List of items. Each style is a dict with keys: style_name and value: [positive_prompt, negative_prompt]
         """
 
-        converter(PATH)
-
         items = {
             "Error loading items.csv, check the console": ["", ""]}
         if not os.path.exists(path):
-            print(f"""Error. No items.csv found. Put your items.csv in the custom_nodes-ComfyUI_Loader-CSV directory of ComfyUI. Then press "Refresh".
+            print(f"""Error. No items.csv found. Put your items.csv in the custom_nodes/ComfyUI_Loader/CSV directory of ComfyUI. Then press "Refresh".
                   Your current root directory is: {folder_paths.base_path}
             """)
             return items
@@ -55,7 +50,7 @@ class CSVLoader(ABC):
                          line in f.readlines()[1:]]
                 items = {x[0]: [x[1], x[2]] for x in items}
         except Exception as e:
-            print(f"""Error loading items.csv. Make sure it is in the custom_nodes-ComfyUI_Loader-CSV directory of ComfyUI. Then press "Refresh".
+            print(f"""Error loading items.csv. Make sure it is in the custom_nodes/ComfyUI_Loader/CSV directory of ComfyUI. Then press "Refresh".
                     Your current root directory is: {folder_paths.base_path}
                     Error: {e}
             """)
@@ -70,7 +65,7 @@ class CSVLoader(ABC):
     def INPUT_TYPES(cls, item_name):
         cls.items_csv = cls.load_csv(
             os.path.join(folder_paths.base_path,
-                         f"custom_nodes\\ComfyUI-CSV-Loader\\CSV\\{item_name}.csv"))
+                         "custom_nodes", "ComfyUI-CSV-Loader", "CSV", f"{item_name}.csv"))
         return {
             "required": {
                 f"{item_name}": (list(cls.items_csv.keys()),),
